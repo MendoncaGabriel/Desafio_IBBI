@@ -8,7 +8,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Routes
-app.include_router(produtos.router, prefix="/produto")
+app.include_router(produtos.router, prefix="/produto", tags=["Produto"])
 
 if __name__ == "__main__":
     import uvicorn
