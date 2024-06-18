@@ -7,16 +7,5 @@
 # Instale as dependencias do projeto usando o seguinte comando
     pip install -r requirements.txt
 
-# Estrutura base do projeto
-    src/
-    ├── main.py
-    ├── config/
-    │   └── database.py
-    ├── controllers/
-    │   └── produto.py
-    ├── models/
-    │   └── produto.py
-    ├── routers/
-    │   └── produtos.py
-    └── schemas/
-        └── produto.py
+# Execute o sistema com o seguinte codigo
+    uvicorn src.main:app --reload
