@@ -18,3 +18,6 @@
 # 2 - Crie um novo anbiente virtual
     python -m venv venv
     .\venv\Scripts\Activate.ps1  # para PowerShell
+
+# Rodar com container doker use o comando
+    docker-compose up --build

@@ -1,15 +1,17 @@
 from pydantic import BaseModel
 
 class ProdutoBase(BaseModel):
-    nome: str
     descricao: str
-    preco: float
+    valor: float
+    quantidade: int
+    categoria_descricao: str
 
 class ProdutoCreate(ProdutoBase):
-    pass
+    categoria_id: int
 
 class Produto(ProdutoBase):
     id: int
+    categoria_id: int  # Inclui o campo categoria_id no modelo
 
     class Config:
         orm_mode = True
