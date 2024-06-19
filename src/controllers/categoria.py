@@ -3,7 +3,8 @@ from src.models.categoria import Categoria
 from src.schemas.categoria import CategoriaCreate
 
 def create(db: Session, categoria: CategoriaCreate):
-    data = Categoria(**categoria.dict())
+    # .dict() foi mudado para .model_dump()
+    data = Categoria(**categoria.model_dump())
     db.add(data)
     db.commit()
     db.refresh(data)
