@@ -12,7 +12,6 @@ from src.schemas.produto import ProdutoCreate, Produto
 
 router = APIRouter()
 
-# Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -20,23 +19,24 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/produto/", response_model=Produto)
+@router.post("/", response_model = Produto)
 def create_new_produto(produto: ProdutoCreate, db: Session = Depends(get_db)):
     return create_produto(db, produto)
 
-@router.get("/produto/{produto_id}", response_model=Produto)
+@router.get("/{produto_id}", response_model=Produto)
 def read_produto(produto_id: int, db: Session = Depends(get_db)):
     db_produto = get_produto(db, produto_id)
     if db_produto is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return db_produto
 
-@router.get("/produtos/", response_model=list[Produto])
+@router.get("/", response_model=list[Produto])
 def read_produtos(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     produtos = get_produtos(db, skip=skip, limit=limit)
     return produtos
 
-@router.put("/produto/{produto_id}", response_model=Produto)
+# aqui
+@router.put("/{produto_id}", response_model=Produto)
 def update_existing_produto(
     produto_id: int, produto: ProdutoCreate, db: Session = Depends(get_db)
 ):
@@ -45,7 +45,7 @@ def update_existing_produto(
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return db_produto
 
-@router.delete("/produto/{produto_id}", response_model=Produto)
+@router.delete("/{produto_id}", response_model=Produto)
 def delete_existing_produto(produto_id: int, db: Session = Depends(get_db)):
     db_produto = get_produto(db, produto_id)
     if db_produto is None:

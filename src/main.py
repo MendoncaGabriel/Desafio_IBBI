@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.routers import produtos
+from src.routers import produtos, categorias
 from src.config.database import engine, Base
 
 # Importa a configuração do SQLAlchemy e inicializa o banco de dados
@@ -9,6 +9,7 @@ app = FastAPI()
 
 # Routes
 app.include_router(produtos.router, prefix="/produto", tags=["Produto"])
+app.include_router(categorias.router, prefix="/categoria", tags=["Categoria"])
 
 if __name__ == "__main__":
     import uvicorn
