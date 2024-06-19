@@ -1,3 +1,4 @@
+import os
 import pymysql
 pymysql.install_as_MySQLdb()
 
@@ -5,14 +6,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-USER = 'root' 
-PASSWORD = 22052719 
-HOST = 'db' 
-PORT = 3333 
-DATABASE = 'ibbi' 
+# Pega as informações das variáveis de ambiente
+ENV_DB_USER = os.getenv('DB_USER')
+ENV_DB_PASS = os.getenv('DB_PASS')
+ENV_DB_HOST = os.getenv('DB_HOST')
+ENV_DB_PORT = os.getenv('DB_PORT')
+ENV_DB_NAME = os.getenv('DB_NAME')
 
 # String de conexão
-connection_string = 'mysql+pymysql://root:22052719@db:3306/ibbi'
+connection_string = f'mysql+pymysql://{ENV_DB_USER}:{ENV_DB_PASS}@{ENV_DB_HOST}:{ENV_DB_PORT}/{ENV_DB_NAME}'
 
 # Cria a engine do SQLAlchemy
 engine = create_engine(connection_string)

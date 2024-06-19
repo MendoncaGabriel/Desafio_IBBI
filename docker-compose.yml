@@ -4,10 +4,10 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: 22052719
-      MYSQL_DATABASE: ibbi
+      MYSQL_ROOT_PASSWORD: '0527'
+      MYSQL_DATABASE: ibbi  # Nome do banco de dados a ser criado
     ports:
-      - "3307:3306"  
+      - "3307:3306"  # Porta externa 3307 mapeada para a porta interna 3306
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -18,7 +18,11 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: mysql+pymysql://root:22052719@db:3306/ibbi  # Ajustado para a porta padrão do MySQL
+      - DB_USER=root
+      - DB_PASS=0527
+      - DB_HOST=db  
+      - DB_PORT=3306
+      - DB_NAME=ibbi  
 
 volumes:
   mysql_data:
