@@ -5,14 +5,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-USER = 'root'
-PASSWORD = '0527'
-HOST = 'localhost'
-PORT = '3306'
-DATABASE = 'ibbi'
+USER = 'root' 
+PASSWORD = 22052719 
+HOST = 'db' 
+PORT = 3333 
+DATABASE = 'ibbi' 
 
 # String de conexão
-connection_string = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
+connection_string = 'mysql+pymysql://root:22052719@db:3306/ibbi'
 
 # Cria a engine do SQLAlchemy
 engine = create_engine(connection_string)
