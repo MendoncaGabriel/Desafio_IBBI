@@ -4,14 +4,14 @@ class ProdutoBase(BaseModel):
     descricao: str
     valor: float
     quantidade: int
-    categoria_descricao: str
 
 class ProdutoCreate(ProdutoBase):
     categoria_id: int
 
-class Produto(ProdutoBase):
+class ProdutoSchema(ProdutoBase):
     id: int
-    categoria_id: int  # Inclui o campo categoria_id no modelo
+    categoria_id: int
+    categoria_descricao: str  # Adicione o campo de descrição da categoria
 
     class Config:
         orm_mode = True

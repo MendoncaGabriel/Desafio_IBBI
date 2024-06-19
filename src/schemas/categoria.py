@@ -6,7 +6,7 @@ class CategoriaBase(BaseModel):
 class CategoriaCreate(CategoriaBase):
     pass
 
-class Categoria(CategoriaBase):
+class CategoriaSchema(CategoriaBase):
     id: int
     
     class Config:

@@ -1,15 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from src.config.database import SessionLocal, engine
-from src.controllers.categoria import (
-    create_categoria,
-    get_categoria,
-    get_categorias,
-    update_categoria,
-    delete_categoria    
-)
-
-from src.schemas.categoria import CategoriaCreate, Categoria
+from src.config.database import SessionLocal
+import src.controllers.categoria as categoria_controller
+from src.schemas.categoria import CategoriaCreate, CategoriaSchema
 
 router = APIRouter()
 
@@ -19,38 +12,35 @@ def get_db():
         yield db
     finally:
         db.close()
-        
-@router.post("/", response_model = Categoria)
-def create_new_categoria(categoria: CategoriaCreate, db: Session = Depends(get_db)):
-    return create_categoria(db, categoria)
+
+@router.post("/", response_model = CategoriaSchema)
+def create (produto: CategoriaCreate, db: Session = Depends(get_db)):
+    return categoria_controller.create(db, produto)
     
-@router.get("/{categoria_id}", response_model=Categoria)
-def read_categoria(categoria_id: int, db: Session = Depends(get_db)):
-    db_categoria =  get_categoria(db, categoria_id)
-    if db_categoria is None:
+@router.get("/{id}", response_model = CategoriaSchema)
+def getById (id: int, db: Session = Depends(get_db)):
+    data = categoria_controller.getById(db, id)
+    if data is None:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    return db_categoria
+    return data
 
-@router.get("/", response_model=list[Categoria])
-def read_categoria(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    categorias = get_categorias(db, skip=skip, limit=limit)
-    return categorias
+@router.get("/", response_model=list[CategoriaSchema])
+def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    data = categoria_controller.getByOffset(db, skip=skip, limit=limit)
+    return data
 
-@router.put("/{categoria_id}", response_model=Categoria)
-def update_existing_categoria(
-    categoria_id: int, categoria: CategoriaCreate, db: Session = Depends(get_db)
+@router.put("/{id}", response_model = CategoriaSchema)
+def update(
+    id: int, categoria: CategoriaCreate, db: Session = Depends(get_db)
 ):
-    db_categoria = update_categoria(db, categoria_id, categoria)
-    if db_categoria is None:
+    data = categoria_controller.update(db, id, categoria)
+    if data is None:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    return db_categoria
+    return data
 
-@router.delete("/{categoria_id}", response_model=Categoria)
-def delete_existing_categoria(categoria_id: int, db: Session = Depends(get_db)):
-    db_categoria = get_categoria(db, categoria_id)
-    if db_categoria is None:
+@router.delete("/{id}", response_model=CategoriaSchema)
+def delete(id: int, db: Session = Depends(get_db)):
+    data = categoria_controller.delete(db, id)
+    if data is None:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    delete_categoria(db, categoria_id)
-    return db_categoria
-    
-
+    return data

@@ -1,46 +1,54 @@
 from sqlalchemy.orm import Session
 from src.models.produto import Produto
+from src.schemas.produto import ProdutoCreate, ProdutoSchema
 from src.models.categoria import Categoria
-from sqlalchemy.orm import joinedload
-from src.schemas.produto import ProdutoCreate, Produto as ProdutoSchema
 
-def create_produto(db: Session, produto: ProdutoCreate):
-    db_produto = Produto(**produto.dict())
+def create(db: Session, produto: ProdutoCreate):
+    # Obtém a categoria associada ao produto
+    categoria = db.query(Categoria).filter(Categoria.id == produto.categoria_id).first()
+    
+    # Cria o objeto Produto no banco de dados
+    db_produto = Produto(**produto.dict(), categoria=categoria)
     db.add(db_produto)
     db.commit()
     db.refresh(db_produto)
-    return db_produto
 
-def getById_produto(db: Session, produto_id: int):
-    produto = db.query(Produto).\
-        join(Categoria, Produto.categoria_id == Categoria.id).\
-        filter(Produto.id == produto_id).\
-        first()
+    # Retorna o produto com a descrição da categoria
+    return ProdutoSchema(
+        id=db_produto.id,
+        descricao=db_produto.descricao,
+        valor=db_produto.valor,
+        quantidade=db_produto.quantidade,
+        categoria_id=db_produto.categoria_id,
+        categoria_descricao=categoria.descricao
+    )
 
+
+def getById(db: Session, id: int):
+    produto = db.query(Produto).join(Categoria, Produto.categoria_id == Categoria.id).filter(Produto.id == id).first()
+    
     if produto:
-        # Crie um objeto ProdutoSchema com a descrição da categoria
-        produto_dict = ProdutoSchema(
-            id=produto.id,
-            descricao=produto.descricao,
-            valor=produto.valor,
-            quantidade=produto.quantidade,
-            categoria_id=produto.categoria_id,
-            categoria_descricao=produto.categoria.descricao  # Acessando a descrição da categoria
+        data = ProdutoSchema(
+            id = produto.id,
+            descricao = produto.descricao,
+            valor = produto.valor,
+            quantidade = produto.quantidade,
+            categoria_id = produto.categoria_id,
+            categoria_descricao = produto.categoria.descricao 
         )
-        return produto_dict
-
+        return data
     return None
 
-def getByOffset_produto(db: Session, skip: int = 0, limit: int = 10):
+def getByOffset(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Produto).offset(skip).limit(limit).all()
 
-def update_produto(db: Session, produto_id: int, produto: ProdutoCreate):
-    db_query = db.query(Produto).filter(Produto.id == produto_id)
+def update(db: Session, id: int, produto: ProdutoCreate):
+    db_query = db.query(Produto).filter(Produto.id == id)
     db_query.update(produto.dict())
     db.commit()
     return db_query.first()
 
-def delete_produto(db: Session, produto_id: int):
-    db_query = db.query(Produto).filter(Produto.id == produto_id)
+def delete(db: Session, id: int):
+    db_query = db.query(Produto).filter(Produto.id == id)
     db_query.delete()
     db.commit()

@@ -13,3 +13,4 @@ class Produto(Base):
 
     # Relacionamento com categoria
     categoria = relationship("Categoria", back_populates="produtos")
+
