@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.config.database import SessionLocal
 from src.controllers import produto as produto_controller  
-from src.schemas.produto import ProdutoCreate, ProdutoSchema
+from src.schemas.produto import ProdutoBase, ProdutoSchema
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=ProdutoSchema)
-def create_produto(produto: ProdutoCreate, db: Session = Depends(get_db)):
+def create_produto(produto: ProdutoBase, db: Session = Depends(get_db)):
     return produto_controller.create(db, produto)
 
 @router.get("/{id}", response_model=ProdutoSchema)
@@ -29,7 +29,7 @@ def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return produto_controller.getByOffset(db, skip=skip, limit=limit)
 
 @router.put("/{id}", response_model=ProdutoSchema)
-def update(id: int, produto: ProdutoCreate, db: Session = Depends(get_db)):
+def update(id: int, produto: ProdutoBase, db: Session = Depends(get_db)):
     data = produto_controller.update(db, id, produto)
     if data is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")

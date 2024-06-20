@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from src.models.produto import Produto
-from src.schemas.produto import ProdutoCreate, ProdutoSchema
+from src.schemas.produto import ProdutoBase, ProdutoSchema
 from src.models.categoria import Categoria
 
-def create(db: Session, produto: ProdutoCreate):
+def create(db: Session, produto: ProdutoBase):
     # Obtém a categoria associada ao produto
     categoria = db.query(Categoria).filter(Categoria.id == produto.categoria_id).first()
     
@@ -29,12 +29,12 @@ def getById(db: Session, id: int):
     
     if produto:
         data = ProdutoSchema(
-            id = produto.id,
-            descricao = produto.descricao,
-            valor = produto.valor,
-            quantidade = produto.quantidade,
-            categoria_id = produto.categoria_id,
-            categoria_descricao = produto.categoria.descricao 
+            id=produto.id,
+            descricao=produto.descricao,
+            valor=produto.valor,
+            quantidade=produto.quantidade,
+            categoria_id=produto.categoria_id,
+            categoria_descricao=produto.categoria.descricao 
         )
         return data
     return None
@@ -42,7 +42,7 @@ def getById(db: Session, id: int):
 def getByOffset(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Produto).offset(skip).limit(limit).all()
 
-def update(db: Session, id: int, produto: ProdutoCreate):
+def update(db: Session, id: int, produto: ProdutoBase):
     db_query = db.query(Produto).filter(Produto.id == id)
     db_query.update(produto.dict())
     db.commit()

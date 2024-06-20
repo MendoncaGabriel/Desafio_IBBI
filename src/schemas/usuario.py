@@ -1,15 +1,15 @@
 from pydantic import BaseModel
 
 class UsuarioBase(BaseModel):
+    nome: str
     login: str
     senha: str
 
-class UsuarioCreate(UsuarioBase):
-    nome: str
-
 class UsuarioSchema(UsuarioBase):
     id: int
-    nome: str
 
-    class Config:
-        orm_mode = True
+class UsuarioToken(BaseModel):
+    id: int
+    nome: str
+    login: str
+    token: str

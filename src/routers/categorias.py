@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.config.database import SessionLocal
 import src.controllers.categoria as categoria_controller
-from src.schemas.categoria import CategoriaCreate, CategoriaSchema
+from src.schemas.categoria import CategoriaBase, CategoriaSchema
 
 router = APIRouter()
 
@@ -13,8 +13,8 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model = CategoriaSchema)
-def create (produto: CategoriaCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=CategoriaBase)
+def create (produto: CategoriaBase, db: Session = Depends(get_db)):
     return categoria_controller.create(db, produto)
     
 @router.get("/{id}", response_model = CategoriaSchema)
@@ -31,7 +31,7 @@ def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
 
 @router.put("/{id}", response_model = CategoriaSchema)
 def update(
-    id: int, categoria: CategoriaCreate, db: Session = Depends(get_db)
+    id: int, categoria: CategoriaBase, db: Session = Depends(get_db)
 ):
     data = categoria_controller.update(db, id, categoria)
     if data is None:
