@@ -17,6 +17,7 @@ def get_db():
 def create_produto(produto: ProdutoBase, db: Session = Depends(get_db)):
     return produto_controller.create(db, produto)
 
+
 @router.get("/{id}", response_model=ProdutoSchema)
 def getById(id: int, db: Session = Depends(get_db)):
     data = produto_controller.getById(db, id)

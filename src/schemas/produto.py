@@ -9,3 +9,4 @@ class ProdutoBase(BaseModel):
 class ProdutoSchema(ProdutoBase):
     id: int
     categoria_descricao: str
+    dolar: float

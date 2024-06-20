@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from src.models.produto import Produto
 from src.schemas.produto import ProdutoBase, ProdutoSchema
 from src.models.categoria import Categoria
+from src.utilities.converter import realDolar
 
 def create(db: Session, produto: ProdutoBase):
     novo_produto = Produto(**produto.dict())
@@ -19,13 +20,15 @@ def create(db: Session, produto: ProdutoBase):
 def getById(db: Session, id: int):
     produto = db.query(Produto).join(Categoria).filter(Produto.id == id).first()
     if produto:
+        dolar = realDolar(produto.valor)
         data = ProdutoSchema(
             id=produto.id,
             descricao=produto.descricao,
             valor=produto.valor,
             quantidade=produto.quantidade,
             categoria_id=produto.categoria_id,
-            categoria_descricao=produto.categoria.descricao if produto.categoria else None
+            categoria_descricao=produto.categoria.descricao if produto.categoria else None,
+            dolar=dolar
         )
         return data
     return None
@@ -33,14 +36,18 @@ def getById(db: Session, id: int):
 def getByOffset(db: Session, skip: int = 0, limit: int = 10):
     produtos = db.query(Produto).join(Categoria).offset(skip).limit(limit).all()
     produtos_schema = []
+
     for produto in produtos:
+        dolar = realDolar(produto.valor)
+
         produto_schema = ProdutoSchema(
             id=produto.id,
             descricao=produto.descricao,
             valor=produto.valor,
             quantidade=produto.quantidade,
             categoria_id=produto.categoria_id,
-            categoria_descricao=produto.categoria.descricao  
+            categoria_descricao=produto.categoria.descricao,
+            dolar=dolar
         )
         produtos_schema.append(produto_schema)
 
