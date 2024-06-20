@@ -28,12 +28,12 @@ def checkAuthorization(credentials: HTTPAuthorizationCredentials = Security(secu
         if expiracao >= agora:
             return payload
         else:
-            raise HTTPException(status_code=401, detail="Token expirado")
+            raise HTTPException(status_code=401, detail="Autorização expirada")
 
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expirado")
+        raise HTTPException(status_code=401, detail="Autorização expirada")
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Token inválido")
+        raise HTTPException(status_code=401, detail="Autorização inválida")
 
 
 def criptografar(texto: str) -> bytes:
