@@ -5,9 +5,9 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: '0527'
-      MYSQL_DATABASE: ibbi  # Nome do banco de dados a ser criado
+      MYSQL_DATABASE: ibbi
     ports:
-      - "3307:3306"  # Porta externa 3307 mapeada para a porta interna 3306
+      - "3307:3306"  # Externo: 3307,  Interno: 3306
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -23,6 +23,8 @@ services:
       - DB_HOST=db  
       - DB_PORT=3306
       - DB_NAME=ibbi  
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+      
 
 volumes:
   mysql_data:

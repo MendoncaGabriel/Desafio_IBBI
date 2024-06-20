@@ -1,19 +1,14 @@
-# Use uma imagem oficial do Python
+# Imagem oficial do Python
 FROM python:3.12
 
-# Defina o diretório de trabalho
+# Diretorio raiz do projeto
 WORKDIR /src
 
-# Copie o arquivo de requisitos
 COPY requirements.txt .
-
-# Instale as dependências
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copie o restante do código da aplicação
 COPY . .
 
-# Exponha a porta que a aplicação irá usar
+# Exponha a porta que a aplicação ira usar
 EXPOSE 8000
 
 # Comando para rodar a aplicação

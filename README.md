@@ -1,7 +1,7 @@
 # Desafio_IBBI
     Projeto de desafio para teste técnico IBBI
 
-# Entre no ambiente Venv
+# Ativar o ambiente virtual
     .\venv\Scripts\activate 
 
 # Instale as dependencias do projeto usando o seguinte comando
@@ -21,3 +21,4 @@
 
 # Rodar com container doker use o comando
     docker-compose up --build
+
