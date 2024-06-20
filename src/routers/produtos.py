@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.config.database import SessionLocal
 from src.controllers import produto as produto_controller  
-from src.schemas.produto import ProdutoBase, ProdutoSchema
+from src.schemas.produto import ProdutoBase, ProdutoSchema, ProdutoDelete
+from src.utilities.auth import checkAuthorization
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=ProdutoBase)
-def create_produto(produto: ProdutoBase, db: Session = Depends(get_db)):
+def create(produto: ProdutoBase, db: Session = Depends(get_db)):
     return produto_controller.create(db, produto)
 
 @router.get("/{id}", response_model=ProdutoSchema)
@@ -35,8 +36,8 @@ def update(id: int, produto: ProdutoBase, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return data
 
-@router.delete("/{id}", response_model=ProdutoBase)
-def delete(id: int, db: Session = Depends(get_db)):
+@router.delete("/{id}", response_model=ProdutoDelete)
+def delete(id: int, db: Session = Depends(get_db), acess: dict = Depends(checkAuthorization)):
     data = produto_controller.delete(db, id)
     if data is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")

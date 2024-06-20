@@ -2,9 +2,13 @@ import os
 import jwt
 import bcrypt
 import datetime
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, Security
+
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 validade = 24
+security = HTTPBearer()
 
 def gerarToken (usuario_id: int) -> str:
     payload = {
@@ -14,25 +18,23 @@ def gerarToken (usuario_id: int) -> str:
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token
 
-def chechToken(token: str) -> dict:
+def checkAuthorization(credentials: HTTPAuthorizationCredentials = Security(security)) -> dict:
+    token = credentials.credentials
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-
-        # Verifica a validade do token
         expiracao = datetime.datetime.fromtimestamp(payload['exp'])
         agora = datetime.datetime.now()
 
         if expiracao >= agora:
-            return payload  
+            return payload
         else:
-            return None  
+            raise HTTPException(status_code=401, detail="Token expirado")
 
     except jwt.ExpiredSignatureError:
-        print("Token expirado")
-        return None
+        raise HTTPException(status_code=401, detail="Token expirado")
     except jwt.InvalidTokenError:
-        print("Token inválido")
-        return None
+        raise HTTPException(status_code=401, detail="Token inválido")
+
 
 def criptografar(texto: str) -> bytes:
     hashed = bcrypt.hashpw(texto.encode('utf-8'), bcrypt.gensalt())
@@ -40,6 +42,5 @@ def criptografar(texto: str) -> bytes:
 
 def verificarSenha(texto: str, hashed: bytes) -> bool:
     if isinstance(hashed, str):
-        hashed = hashed.encode('utf-8')  # Garante que hashed seja bytes
-
+        hashed = hashed.encode('utf-8') 
     return bcrypt.checkpw(texto.encode('utf-8'), hashed)

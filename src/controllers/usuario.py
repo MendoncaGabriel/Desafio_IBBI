@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from src.models.usuario import Usuario
 from fastapi import HTTPException
 from src.schemas.usuario import UsuarioBase, UsuarioToken, UsuarioLoginSaida
-from src.utilities.auth import gerarToken, criptografar, chechToken, verificarSenha
+from src.utilities.auth import gerarToken, criptografar, verificarSenha
 
 def signup(db: Session, usuario: UsuarioBase):
     # Verificar se o login já existe

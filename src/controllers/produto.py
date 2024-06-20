@@ -60,6 +60,14 @@ def update(db: Session, id: int, produto: ProdutoBase):
     return data.first()
 
 def delete(db: Session, id: int):
+    # Verifique se o produto existe
     db_query = db.query(Produto).filter(Produto.id == id)
+    produto = db_query.first()
+    if produto is None:
+        return None
+
+    # Apague o produto
     db_query.delete()
     db.commit()
+    return {"msg": "Produto apagado com sucesso!", "produto": produto}
+
