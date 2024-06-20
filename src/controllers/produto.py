@@ -70,4 +70,3 @@ def delete(db: Session, id: int):
     db_query.delete()
     db.commit()
     return {"msg": "Produto apagado com sucesso!", "produto": produto}
-
