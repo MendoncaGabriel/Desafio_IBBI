@@ -3,7 +3,6 @@
 Este é um projeto desenvolvido como parte do desafio técnico para IBBI.
 
 ## Índice
-
 - [Ambiente Virtual](#ambiente-virtual)
 - [Solução de Problemas](#solução-de-problemas)
 - [Rodar com Docker](#rodar-com-docker)
