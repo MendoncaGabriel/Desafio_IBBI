@@ -3,6 +3,7 @@ from src.models.produto import Produto
 from src.schemas.produto import ProdutoBase, ProdutoSchema
 from src.models.categoria import Categoria
 from src.utilities.converter import realDolar
+from fastapi import Query
 
 def create(db: Session, produto: ProdutoBase):
     novo_produto = Produto(**produto.dict())
@@ -70,3 +71,25 @@ def delete(db: Session, id: int):
     db_query.delete()
     db.commit()
     return {"msg": "Produto apagado com sucesso!", "produto": produto}
+
+def getByCategoria(db: Session, categorias: list):
+    data = []
+
+    for categoria in categorias:
+        # Consulta para buscar produtos pela descrição da categoria
+        produtos = db.query(Produto).join(Categoria).filter(Categoria.descricao == categoria).all()
+
+        for produto in produtos:
+            dolar = realDolar(produto.valor)  # Supondo que realDolar seja uma função válida
+            item = ProdutoSchema(
+                id=produto.id,
+                descricao=produto.descricao,
+                valor=produto.valor,
+                quantidade=produto.quantidade,
+                categoria_id=produto.categoria_id,
+                categoria_descricao=produto.categoria.descricao if produto.categoria else None,
+                dolar=dolar
+            )
+            data.append(item)
+
+    return data

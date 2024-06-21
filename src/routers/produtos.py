@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from src.config.database import SessionLocal
 from src.controllers import produto as produto_controller  
@@ -25,6 +25,14 @@ def getById(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return data
 
+@router.get("/getbycategoria", response_model=list[ProdutoSchema])
+def getByCategoria(categorias: list[str] = Query(...), db: Session = Depends(get_db)):
+    data = produto_controller.getByCategoria(db, categorias)
+
+    if not data:
+        raise HTTPException(status_code=404, detail="Produtos não encontrados")
+
+    return data
 @router.get("/", response_model=list[ProdutoSchema])
 def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return produto_controller.getByOffset(db, skip=skip, limit=limit)
