@@ -50,7 +50,7 @@ uvicorn src.main:app --reload
 
 ## Solução de Problemas
 
-# Erro conexao com banco de dados
+## Erro conexao com banco de dados
 Em caso de erro com conexão com banco de dados ou variaveis de ambiente desatualizadas, abra a pasta ./src/config e apague a pasta __pycache__ dentro dela.
 
 Se ocorrerem problemas durante a execução, siga estes passos:
@@ -84,3 +84,16 @@ Para acessar rotas protegidas, adicione o seguinte cabeçalho à sua requisiçã
 Authorization: Bearer <seu-token-aqui>
 
 Substitua <seu-token-aqui> pelo token obtido na autenticação.
+
+## Cadastro
+
+1 - Cadastre uma categoria informando uma descricao para o endpoint: POST /categoria/
+2 - Cadastro um produto informando os seguintes campos
+{
+  "descricao": "string",
+  "valor": 0,
+  "quantidade": 0,
+  "categoria_id": 1
+}
+
+Observação: O campo "categoria_id" e obrigatorio para manter o relacionamento entre as tabelas de categoria e produto
