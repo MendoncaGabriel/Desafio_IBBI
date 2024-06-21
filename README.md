@@ -1,5 +1,4 @@
-# Desafio IBBI
-
+# Desafio Técnico IBBI
 Este é um projeto desenvolvido como parte do desafio técnico para IBBI.
 
 ## Índice
