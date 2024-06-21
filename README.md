@@ -1,6 +1,6 @@
 # Desafio IBBI
-
 Este é um projeto desenvolvido como parte do desafio técnico para IBBI.
+O objetivo e criar um sistema para controle de vendas de um e-commerce.
 
 ## Índice
 
