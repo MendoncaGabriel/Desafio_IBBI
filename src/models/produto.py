@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from src.config.database import Base
 
@@ -10,6 +10,7 @@ class Produto(Base):
     valor = Column(Float)
     quantidade = Column(Integer, index=True)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
+    imagem = Column(Text, default="")
 
     # Relacionamento com categoria
     categoria = relationship("Categoria", back_populates="produtos")

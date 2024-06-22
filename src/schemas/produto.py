@@ -5,12 +5,13 @@ class ProdutoBase(BaseModel):
     valor: float
     quantidade: int
     categoria_id: int
-
+    imagem: str
+    
 class ProdutoSchema(ProdutoBase):
     id: int
     categoria_descricao: str
     dolar: float
-
+    
 class ProdutoDelete(BaseModel):
     msg: str
     produto: ProdutoBase

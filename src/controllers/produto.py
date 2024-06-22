@@ -15,6 +15,7 @@ def create(db: Session, produto: ProdutoBase):
         descricao=novo_produto.descricao,
         valor=novo_produto.valor,
         quantidade=novo_produto.quantidade,
+        imagem=novo_produto.imagem,
         categoria_id=novo_produto.categoria_id
     )
         
@@ -28,6 +29,7 @@ def getById(db: Session, id: int):
             valor=produto.valor,
             quantidade=produto.quantidade,
             categoria_id=produto.categoria_id,
+            imagem=produto.imagem,
             categoria_descricao=produto.categoria.descricao if produto.categoria else None,
             dolar=dolar
         )
@@ -40,13 +42,13 @@ def getByOffset(db: Session, skip: int = 0, limit: int = 10):
 
     for produto in produtos:
         dolar = realDolar(produto.valor)
-
         produto_schema = ProdutoSchema(
             id=produto.id,
             descricao=produto.descricao,
             valor=produto.valor,
             quantidade=produto.quantidade,
             categoria_id=produto.categoria_id,
+            imagem=produto.imagem,
             categoria_descricao=produto.categoria.descricao,
             dolar=dolar
         )
@@ -87,6 +89,7 @@ def getByCategoria(db: Session, categorias: list):
                 valor=produto.valor,
                 quantidade=produto.quantidade,
                 categoria_id=produto.categoria_id,
+                imagem=produto.imagem,
                 categoria_descricao=produto.categoria.descricao if produto.categoria else None,
                 dolar=dolar
             )

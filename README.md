@@ -52,7 +52,7 @@ uvicorn src.main:app --reload
 ## Solução de Problemas
 
 ## Erro conexao com banco de dados
-Em caso de erro com conexão com banco de dados ou variaveis de ambiente desatualizadas, abra a pasta ./src/config e apague a pasta __pycache__ dentro dela.
+Em caso de erro com conexão com banco de dados ou variaveis de ambiente desatualizadas, e necessario apagar o cache ultilizando o comando: python -m pyclean .
 
 Se ocorrerem problemas durante a execução, siga estes passos:
 
