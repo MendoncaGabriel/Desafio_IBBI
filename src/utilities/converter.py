@@ -8,9 +8,9 @@ def realDolar(valor_em_reais):
             taxa_dolar = data['rates']['BRL']
 
             # Converter para dolar
-            valor_em_dolares = valor_em_reais * taxa_dolar
+            valor_em_dolares = valor_em_reais / taxa_dolar
 
-            return valor_em_dolares
+            return round(valor_em_dolares, 2)
 
         else:
             print(f"Erro ao consultar API: {response.status_code}")

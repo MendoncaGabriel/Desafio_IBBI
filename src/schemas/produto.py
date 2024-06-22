@@ -6,6 +6,7 @@ class ProdutoBase(BaseModel):
     quantidade: int
     categoria_id: int
     imagem: str
+    venda: int
     
 class ProdutoSchema(ProdutoBase):
     id: int

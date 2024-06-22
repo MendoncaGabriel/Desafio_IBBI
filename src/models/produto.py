@@ -8,10 +8,11 @@ class Produto(Base):
     id = Column(Integer, primary_key=True, unique=True, index=True)
     descricao = Column(String(255), unique=True, index=True)
     valor = Column(Float)
-    quantidade = Column(Integer, index=True)
+    quantidade = Column(Integer)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     imagem = Column(Text, default="")
+    venda = Column(Integer)
 
-    # Relacionamento com categoria
+    # Relacionamentos
     categoria = relationship("Categoria", back_populates="produtos")
-
+    registros = relationship("Registro", back_populates="produto")

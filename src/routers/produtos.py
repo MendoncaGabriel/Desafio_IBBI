@@ -28,6 +28,11 @@ def get_by_categoria(categ: Optional[List[str]] = Query(None), db: Session = Dep
 
     return data
 
+@router.get("/mais_vendidos")
+def top10_mais_vendidos(db: Session = Depends(get_db)):
+    top10 = produto_controller.mais_vendidos(db)
+    return top10
+
 @router.get("/", response_model=list[ProdutoSchema])
 def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return produto_controller.getByOffset(db, skip=skip, limit=limit)
@@ -52,3 +57,5 @@ def delete(id: int, db: Session = Depends(get_db), access: dict = Depends(checkA
     if data is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return data
+
+

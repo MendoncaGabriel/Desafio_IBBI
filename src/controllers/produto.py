@@ -96,3 +96,8 @@ def getByCategoria(db: Session, categorias: list):
             data.append(item)
 
     return data
+
+def mais_vendidos(db: Session, limit: int = 10):
+    produtos = db.query(Produto).join(Categoria).order_by(Produto.venda.desc()).limit(limit).all()
+
+    return produtos

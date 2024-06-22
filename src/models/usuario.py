@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from src.config.database import Base
+from sqlalchemy.orm import relationship
+
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -8,3 +10,7 @@ class Usuario(Base):
     nome = Column(String(255), unique=True, index=True)
     login = Column(String(255), unique=True, index=True)
     senha = Column(String(255))
+
+    # Relacionamentos
+    registros = relationship("Registro", back_populates="usuario")
+    
