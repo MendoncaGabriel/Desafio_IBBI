@@ -23,9 +23,10 @@ def create(produto: ProdutoBase, db: Session = Depends(get_db), access: dict = D
 def get_by_categoria(categ: Optional[List[str]] = Query(None), db: Session = Depends(get_db)):
     if categ is None:
         categ = []
-        print(categ)
-    print(f"Categorias recebidas: {categ}")
-    return {"categs": categ}
+
+    data = produto_controller.getByCategoria(db, categ)
+
+    return data
 
 @router.get("/", response_model=list[ProdutoSchema])
 def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):

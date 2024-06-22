@@ -17,17 +17,17 @@ def get_db():
 @router.post("/", response_model=CategoriaBase)
 def create (produto: CategoriaBase, db: Session = Depends(get_db), access: dict = Depends(checkAuthorization)):
     return categoria_controller.create(db, produto)
-    
+
+@router.get("/", response_model=list[CategoriaSchema])
+def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    data = categoria_controller.getByOffset(db, skip=skip, limit=limit)
+    return data
+
 @router.get("/{id}", response_model = CategoriaSchema)
 def getById (id: int, db: Session = Depends(get_db)):
     data = categoria_controller.getById(db, id)
     if data is None:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    return data
-
-@router.get("/", response_model=list[CategoriaSchema])
-def getByOffset(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    data = categoria_controller.getByOffset(db, skip=skip, limit=limit)
     return data
 
 @router.put("/{id}", response_model = CategoriaSchema)
