@@ -10,6 +10,10 @@ O objetivo e criar um sistema para controle de vendas de um e-commerce.
 - [Obtendo Token de Autenticação](#obtendo-token-de-autenticação)
 - [Acessando Rotas Restritas](#acessando-rotas-restritas)
 
+
+## Documentação da API
+Confira a documentação da API aqui (#http://localhost:8000/docs)
+
 ## Ambiente Virtual
 **1 - Crie um ambiente vitual usando:**
 python -m venv venv

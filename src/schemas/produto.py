@@ -7,12 +7,11 @@ class ProdutoEntrada(BaseModel):
     imagem: str
     categoria_id: int
     
-class ProdutoSaida(BaseModel):
+class ProdutoSaida(ProdutoEntrada):
     id: int
-    descricao: str
-    valor: float
-    quantidade: int
-    categoria_id: int
-    imagem: str
+    venda: int
     categoria_descricao: str
     dolar: float
+
+class ProdutoCreate(ProdutoEntrada):
+    id: int
