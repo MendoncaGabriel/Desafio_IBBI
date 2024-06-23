@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-class CategoriaBase(BaseModel):
+class CategoriaEntrada(BaseModel):
     descricao: str
 
-class CategoriaSchema(CategoriaBase):
+class CategoriaSaida(CategoriaEntrada):
     id: int

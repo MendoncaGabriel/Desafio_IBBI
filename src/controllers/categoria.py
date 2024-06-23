@@ -1,27 +1,49 @@
 from sqlalchemy.orm import Session
 from src.models.categoria import Categoria
-from src.schemas.categoria import CategoriaBase, CategoriaSchema
+from src.schemas.categoria import CategoriaEntrada
+from fastapi import HTTPException
+from sqlalchemy.exc import SQLAlchemyError
 
-def create(db: Session, categoria_data: CategoriaBase):
-    data = Categoria(**categoria_data.model_dump())
-    db.add(data)
-    db.commit()
-    db.refresh(data)
-    return data
+def create(db: Session, categoria_data: CategoriaEntrada) -> Categoria:
+    try:
+        categoria = Categoria(**categoria_data.model_dump())
+        db.add(categoria)
+        db.commit()
+        db.refresh(categoria)
+        return categoria
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def getById(db: Session, categoria_id: int):
-    return db.query(Categoria).filter(Categoria.id == categoria_id).first()
+def get_by_id(db: Session, categoria_id: int) -> Categoria:
+    try:
+        return db.query(Categoria).filter(Categoria.id == categoria_id).first()
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def getByOffset(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Categoria).offset(skip).limit(limit).all()
+def get_by_offset(db: Session, skip: int = 0, limit: int = 10) -> list:
+    try:
+        return db.query(Categoria).offset(skip).limit(limit).all()
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def update(db: Session, categoria_id: int, categoria_data: CategoriaBase):
-    db_query = db.query(Categoria).filter(Categoria.id == categoria_id)
-    db_query.update(categoria_data.dict(exclude_unset=True))
-    db.commit()
-    return db_query.first()
+def update(db: Session, categoria_id: int, categoria_data: CategoriaEntrada) -> Categoria:
+    try:
+        db_query = db.query(Categoria).filter(Categoria.id == categoria_id)
+        db_query.update(categoria_data.model_dump(exclude_unset=True))
+        db.commit()
+        return db_query.first()
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def delete(db: Session, categoria_id: int):
-    db_query = db.query(Categoria).filter(Categoria.id == categoria_id)
-    db_query.delete()
-    db.commit()
+def delete(db: Session, categoria_id: int) -> Categoria:
+    try:
+        categoria = db.query(Categoria).filter(Categoria.id == categoria_id).first()
+        if categoria:
+            db.delete(categoria)
+            db.commit()
+        return categoria
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error

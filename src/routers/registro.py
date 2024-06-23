@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from src.config.database import SessionLocal
+from config.database import SessionLocal
 import src.controllers.registro as registro_controller
 from src.schemas.registro import RegistroBase, RegistroSchema
 from src.utilities.auth import checkAuthorization

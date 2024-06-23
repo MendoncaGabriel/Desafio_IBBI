@@ -1,29 +1,36 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from src.models.produto import Produto
-from src.schemas.produto import ProdutoBase, ProdutoSchema
 from src.models.categoria import Categoria
+from src.schemas.produto import ProdutoSaida, ProdutoEntrada
 from src.utilities.converter import realDolar
-from fastapi import Query
+from fastapi import HTTPException
+from sqlalchemy.exc import SQLAlchemyError
+from typing import List
 
-def create(db: Session, produto: ProdutoBase):
-    novo_produto = Produto(**produto.dict())
-    db.add(novo_produto)
-    db.commit()
-    db.refresh(novo_produto)
+def create(db: Session, produto: ProdutoEntrada) -> Produto:
+    try:
+        novo_produto = Produto(**produto.model_dump())
+        db.add(novo_produto)
+        db.commit()
+        return novo_produto
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-    return ProdutoBase(
-        descricao=novo_produto.descricao,
-        valor=novo_produto.valor,
-        quantidade=novo_produto.quantidade,
-        imagem=novo_produto.imagem,
-        categoria_id=novo_produto.categoria_id
-    )
-        
-def getById(db: Session, id: int):
-    produto = db.query(Produto).join(Categoria).filter(Produto.id == id).first()
-    if produto:
-        dolar = realDolar(produto.valor)
-        data = ProdutoSchema(
+def get_by_id(db: Session, id: int) -> ProdutoSaida:
+    try:
+        produto = (
+            db.query(Produto)
+            .outerjoin(Produto.categoria)
+            .filter(Produto.id == id)
+            .first()
+        )
+
+        if not produto:
+            return None
+
+        return ProdutoSaida(
             id=produto.id,
             descricao=produto.descricao,
             valor=produto.valor,
@@ -31,59 +38,67 @@ def getById(db: Session, id: int):
             categoria_id=produto.categoria_id,
             imagem=produto.imagem,
             categoria_descricao=produto.categoria.descricao if produto.categoria else None,
-            dolar=dolar
+            dolar=realDolar(produto.valor)
         )
-        return data
-    return None
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def getByOffset(db: Session, skip: int = 0, limit: int = 10):
-    produtos = db.query(Produto).join(Categoria).offset(skip).limit(limit).all()
-    produtos_schema = []
-
-    for produto in produtos:
-        dolar = realDolar(produto.valor)
-        produto_schema = ProdutoSchema(
-            id=produto.id,
-            descricao=produto.descricao,
-            valor=produto.valor,
-            quantidade=produto.quantidade,
-            categoria_id=produto.categoria_id,
-            imagem=produto.imagem,
-            categoria_descricao=produto.categoria.descricao,
-            dolar=dolar
-        )
-        produtos_schema.append(produto_schema)
-
-    return produtos_schema
-
-def update(db: Session, id: int, produto: ProdutoBase):
-    data = db.query(Produto).filter(Produto.id == id)
-    data.update(produto.dict())
-    db.commit()
-    return data.first()
-
-def delete(db: Session, id: int):
-    # Verifique se o produto existe
-    db_query = db.query(Produto).filter(Produto.id == id)
-    produto = db_query.first()
-    if produto is None:
-        return None
-
-    # Apague o produto
-    db_query.delete()
-    db.commit()
-    return {"msg": "Produto apagado com sucesso!", "produto": produto}
-
-def getByCategoria(db: Session, categorias: list):
-    data = []
-
-    for categoria in categorias:
-        # Consulta para buscar produtos pela descrição da categoria
-        produtos = db.query(Produto).join(Categoria).filter(Categoria.descricao == categoria).all()
+def get_by_offset(db: Session, skip: int = 0, limit: int = 10) -> List[ProdutoSaida]:
+    try:
+        produtos = db.query(Produto).join(Categoria).offset(skip).limit(limit).all()
+        produtos_schema = []
 
         for produto in produtos:
-            dolar = realDolar(produto.valor)  # Supondo que realDolar seja uma função válida
-            item = ProdutoSchema(
+            dolar = realDolar(produto.valor)
+            produto_schema = ProdutoSaida(
+                id=produto.id,
+                descricao=produto.descricao,
+                valor=produto.valor,
+                quantidade=produto.quantidade,
+                categoria_id=produto.categoria_id,
+                imagem=produto.imagem,
+                categoria_descricao=produto.categoria.descricao,
+                dolar=dolar
+            )
+            produtos_schema.append(produto_schema)
+        return produtos_schema
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+
+def update(db: Session, id: int, produto: ProdutoSaida) -> ProdutoSaida:
+    try:
+        db.query(Produto).filter(Produto.id == id).update(produto.model_dump())
+        db.commit()
+        return produto
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+
+def delete(db: Session, id: int) -> ProdutoSaida:
+    try:
+        produto = db.query(Produto).filter(Produto.id == id).first()
+        if not produto:
+            raise HTTPException(status_code=404, detail=f"Produto com ID {id} não encontrado")
+
+        db.delete(produto)
+        db.commit()
+
+        return produto
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+
+def get_by_categoria(db: Session, categorias: List[str]) -> List[ProdutoSaida]:
+    try:
+        produtos = (
+            db.query(Produto)
+            .join(Produto.categoria)
+            .filter(Produto.categoria.has(Produto.descricao.in_(categorias)))
+            .all()
+        )
+
+        produtos_schema = [
+            ProdutoSaida(
                 id=produto.id,
                 descricao=produto.descricao,
                 valor=produto.valor,
@@ -91,13 +106,37 @@ def getByCategoria(db: Session, categorias: list):
                 categoria_id=produto.categoria_id,
                 imagem=produto.imagem,
                 categoria_descricao=produto.categoria.descricao if produto.categoria else None,
-                dolar=dolar
+                dolar=realDolar(produto.valor)
             )
-            data.append(item)
+            for produto in produtos
+        ]
+        return produtos_schema
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-    return data
+def mais_vendidos(db: Session, limit: int = 10) -> List[ProdutoSaida]:
+   try:
+        produtos = (
+            db.query(Produto)
+            .outerjoin(Produto.categoria)
+            .order_by(desc(Produto.venda))
+            .limit(limit)
+            .all()
+        )
 
-def mais_vendidos(db: Session, limit: int = 10):
-    produtos = db.query(Produto).join(Categoria).order_by(Produto.venda.desc()).limit(limit).all()
-
-    return produtos
+        produtos_schema = [
+            ProdutoSaida(
+                id=produto.id,
+                descricao=produto.descricao,
+                valor=produto.valor,
+                quantidade=produto.quantidade,
+                categoria_id=produto.categoria_id,
+                imagem=produto.imagem,
+                categoria_descricao=produto.categoria.descricao if produto.categoria else None,
+                dolar=realDolar(produto.valor)
+            )
+            for produto in produtos
+        ]
+        return produtos_schema
+   except SQLAlchemyError as error:
+       raise HTTPException(status_code=500, detail="Erro interno do servidor") from error

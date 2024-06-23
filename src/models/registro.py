@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from src.config.database import Base
+from config.database import Base
 
 class Registro(Base):
     __tablename__ = "registros"
@@ -8,6 +8,7 @@ class Registro(Base):
     id = Column(Integer, primary_key=True, index=True)
     data = Column(DateTime)
     observacao = Column(String(255))
+    quantidade = Column(Integer)
     nome_cliente = Column(String(255))
     
     # Chaves estrangeiras para relacionamentos
