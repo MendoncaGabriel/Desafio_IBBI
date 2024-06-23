@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String
 from config.database import Base
 from sqlalchemy.orm import relationship
 
-
 class Usuario(Base):
     __tablename__ = "usuarios"
 
