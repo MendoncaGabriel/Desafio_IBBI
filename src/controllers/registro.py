@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from src.models.registro import Registro
 from src.models.produto import Produto
-from src.schemas.registro import RegistroBase
+from src.schemas.registro import RegistroEntrada
 from fastapi import HTTPException
 
 
-def create_registro(db: Session, registro_data: RegistroBase) -> Registro:
+def create(db: Session, registro_data: RegistroEntrada):
     try:
         data_atual = datetime.now()
 

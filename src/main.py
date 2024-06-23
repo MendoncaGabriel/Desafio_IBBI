@@ -11,10 +11,10 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Routes
-# app.include_router(produtos.router, prefix="/produto", tags=["Produto"])
+app.include_router(produtos.router, prefix="/produto", tags=["Produto"])
 app.include_router(categorias.router, prefix="/categoria", tags=["Categoria"])
-# app.include_router(usuario.router, prefix="/usuario", tags=["Usuário"])
-# app.include_router(registro.router, prefix="/registro", tags=["Registro"])
+app.include_router(usuario.router, prefix="/usuario", tags=["Usuário"])
+app.include_router(registro.router, prefix="/registro", tags=["Registro"])
 
 if __name__ == "__main__":
     import uvicorn

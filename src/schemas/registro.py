@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class RegistroBase(BaseModel):
+class RegistroEntrada(BaseModel):
     observacao: str
     nome_cliente: str
     produto_id: int
@@ -8,7 +8,7 @@ class RegistroBase(BaseModel):
     usuario_id: int
     data: str
     
-class RegistroSchema(RegistroBase):
+class RegistroSaida(RegistroEntrada):
     id: int
 
     class Config:

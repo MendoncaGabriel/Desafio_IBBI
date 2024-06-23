@@ -1,19 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from config.database import SessionLocal
-import src.controllers.registro as registro_controller
-from src.schemas.registro import RegistroBase, RegistroSchema
+from config.database import get_db
+from src.controllers.registro  import create
+from src.schemas.registro import RegistroEntrada, RegistroSaida
 from src.utilities.auth import checkAuthorization
 
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
         
-@router.post("/")
-def create (registro: RegistroBase, db: Session = Depends(get_db)):
-    return registro_controller.create(db, registro)
+@router.post("/", response_model=RegistroSaida)
+def create (
+    registro: RegistroEntrada, 
+    db: Session = Depends(get_db),
+    access: dict = Depends(checkAuthorization)
+
+):
+    return create(db, registro)
