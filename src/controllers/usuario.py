@@ -35,7 +35,7 @@ def signup(db: Session, usuario: UsuarioEntrada):
         )
     except SQLAlchemyError as error:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: usuario -> signup") from error
 
 
 def login(db: Session, usuario: UsuarioLogin):
@@ -59,4 +59,4 @@ def login(db: Session, usuario: UsuarioLogin):
 
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: usuario -> login") from error

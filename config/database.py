@@ -1,8 +1,7 @@
 from dotenv import load_dotenv, find_dotenv
 import os
-import pymysql
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm  import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Carrega variáveis de ambiente do arquivo .env

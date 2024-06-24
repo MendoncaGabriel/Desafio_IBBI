@@ -22,7 +22,7 @@ def create(db: Session, produto: ProdutoEntrada):
     
     except SQLAlchemyError as error:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> create") from error
 
 def get_by_id(db: Session, id: int):
     try:
@@ -33,8 +33,8 @@ def get_by_id(db: Session, id: int):
             .first()
         )
         
-        if produto is None:
-            raise HTTPException(status_code=404, detail=f"Produto com id {id} não encontrado")
+        if not produto:
+            raise HTTPException(status_code=404, detail=f"Produto com id: {id} não encontrado")
 
         return ProdutoSaida(
             id=produto.id,
@@ -50,7 +50,7 @@ def get_by_id(db: Session, id: int):
         
     except SQLAlchemyError as error:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> get_by_id") from error
     
 def get_by_descricao(db: Session, descricao: str):
     try:
@@ -61,8 +61,8 @@ def get_by_descricao(db: Session, descricao: str):
             .first()
         )
         
-        if produto is None:
-            raise HTTPException(status_code=404, detail=f"Produto com descricão {descricao} não encontrado")
+        if not produto:
+            raise HTTPException(status_code=404, detail=f"Produto com descricão: {descricao} não encontrado")
 
         return ProdutoSaida(
             id=produto.id,
@@ -78,11 +78,15 @@ def get_by_descricao(db: Session, descricao: str):
         
     except SQLAlchemyError as error:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> get_by_descricao") from error
 
 def get_by_offset(db: Session, skip: int = 0, limit: int = 10):
     try:
         produtos = db.query(Produto).join(Categoria).offset(skip).limit(limit).all()
+        
+        if len(produtos) == 0:
+            raise HTTPException(status_code=404, detail=f"Nenhum produto encontrado no offset: {skip}, limit: {limit}")
+        
         produtos_schema = []
         cotacao = getDolar()
         
@@ -102,30 +106,34 @@ def get_by_offset(db: Session, skip: int = 0, limit: int = 10):
         return produtos_schema
     
     except SQLAlchemyError as error:
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> get_by_offset") from error
 
 def update(db: Session, id: int, produto: ProdutoEntrada):
     try:
         # Verifica se a descrição já existe em outro produto
         descricao_existente = db.query(Produto).filter(Produto.descricao == produto.descricao, Produto.id != id).first()
         if descricao_existente:
-            raise HTTPException(status_code=400, detail="Já existe um produto com esta descrição")
+            raise HTTPException(status_code=400, detail=f"Já existe um produto com esta descrição: {produto.descricao}")
 
         # Atualizar o produto pelo ID
         produto_update = db.query(Produto).filter(Produto.id == id)
+        
+        if not produto_update:
+            raise HTTPException(status_code=404, detail=f"Produto com o id: {id}, não foi encontrado para atualização")
+        
         produto_update.update(produto.model_dump(exclude_unset=True))
         db.commit()
         
         return produto_update.first()
     except SQLAlchemyError as error:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Erro interno do servidor ao atualizar o produto") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> update") from error
 
 def delete(db: Session, id: int):
     try:
         produto = db.query(Produto).filter(Produto.id == id).first()
         if not produto:
-            raise HTTPException(status_code=404, detail=f"Produto com ID {id} não encontrado")
+            raise HTTPException(status_code=404, detail=f"Produto com ID {id} não encontrado para remoção")
 
         db.delete(produto)
         db.commit()
@@ -135,11 +143,15 @@ def delete(db: Session, id: int):
     except SQLAlchemyError as error:
         db.rollback()
         print(error)
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> delete") from error
 
 def get_by_categoria(db: Session, categorias: List[str]):
     try:
         produtos = db.query(Produto).join(Categoria).filter(Categoria.descricao.in_(categorias)).all()
+        
+        if len(produtos) == 0:
+            raise HTTPException(status_code=404, detail=f"Nenhum produto encontrado com estas categorias")
+            
         produtos_schema = []
         cotacao = getDolar() 
 
@@ -160,11 +172,15 @@ def get_by_categoria(db: Session, categorias: List[str]):
         return produtos_schema
         
     except SQLAlchemyError as error:
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> get_by_categoria") from error
 
 def mais_vendidos(db: Session, limit: int = 10):
    try:
         produtos = db.query(Produto).join(Categoria).order_by(desc(Produto.venda)).limit(limit).all()
+        
+        if len(produtos) == 0:
+            raise HTTPException(status_code=404, detail="Nenhum produto encontrado em mais vendidos")
+        
         produtos_schema = []
         cotacao = getDolar()
         
@@ -184,5 +200,4 @@ def mais_vendidos(db: Session, limit: int = 10):
         return produtos_schema
         
    except SQLAlchemyError as error:
-       print(error)
-       raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+       raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> mais_vendidos") from error

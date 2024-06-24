@@ -14,6 +14,3 @@ class RegistroSaida(RegistroEntrada):
     descricao_produto: str
 
 
-    class Config:
-        orm_mode = True
-

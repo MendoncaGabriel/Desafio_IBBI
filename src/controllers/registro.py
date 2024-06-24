@@ -65,4 +65,4 @@ def create(db: Session, registro: RegistroEntrada):
 
     except SQLAlchemyError as error:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: registro -> create") from error
