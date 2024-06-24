@@ -8,6 +8,8 @@ class Registro(Base):
     data = Column(String(10))
     hora = Column(String(5))
     descricao_produto = Column(String(255))
+    quantidade = Column(Integer)
+    produto_id = Column(Integer)
     nome_cliente = Column(String(45))
     nome_vendedor = Column(String(45))
     observacao = Column(String(255))

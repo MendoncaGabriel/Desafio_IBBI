@@ -11,7 +11,10 @@ router = APIRouter()
 def create (
     registro: RegistroEntrada, 
     db: Session = Depends(get_db),
-    access: dict = Depends(checkAuthorization)
+    # access: dict = Depends(checkAuthorization)
 
 ):
     return Controller.create(db, registro)
+
+
+# adicionar rota para pegar 4 ultimas vendas
