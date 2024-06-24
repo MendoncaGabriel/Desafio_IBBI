@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from config.database import get_db
 from src.controllers import usuario as Controller
-from src.schemas.usuario import UsuarioEntrada, UsuarioSaida, UsuarioLogin
+from src.schemas.usuario import UsuarioEntrada, UsuarioSaida, UsuarioLogin, UsuarioRemove
 router = APIRouter()
         
 @router.post("/signup", response_model=UsuarioSaida)
@@ -18,3 +18,11 @@ def login (
     db: Session = Depends(get_db)
 ):
     return Controller.login(db, usuario)
+
+@router.delete("/{id}", response_model=UsuarioRemove)
+def delete(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    return Controller.delete(db, id)
+    

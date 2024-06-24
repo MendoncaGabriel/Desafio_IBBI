@@ -13,3 +13,5 @@ class UsuarioSaida(BaseModel):
     id: int
     token: str
     
+class UsuarioRemove(BaseModel):
+    msg: str

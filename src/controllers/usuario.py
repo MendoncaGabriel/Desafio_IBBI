@@ -60,3 +60,22 @@ def login(db: Session, usuario: UsuarioLogin):
     except Exception as error:
         print(error)
         raise HTTPException(status_code=500, detail="Erro interno do servidor: usuario -> login") from error
+
+
+def delete(db: Session, id: int):
+    try:
+        usuario = db.query(Usuario).filter(Usuario.id == id).first()
+        if not usuario:
+            raise HTTPException(status_code=404, detail=f"usuário com ID {id} não encontrado para remoção")
+
+        db.delete(usuario)
+        db.commit()
+        
+        # verificar senha do usuario se esta correta para remover 
+
+        return {"msg": "usuário com removido com sucesso!"}
+    
+    except SQLAlchemyError as error:
+        db.rollback()
+        print(error)
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: usuário -> delete") from error

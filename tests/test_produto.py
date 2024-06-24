@@ -118,8 +118,6 @@ def test_mais_vendidos_produto():
         assert "categoria_descricao" in produto
         assert "dolar" in produto
     
-        
-
 def test_update_produto():
     global produto_id, categoria_id
     descricao = f"update {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"

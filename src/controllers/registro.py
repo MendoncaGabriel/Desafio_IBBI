@@ -66,3 +66,39 @@ def create(db: Session, registro: RegistroEntrada):
     except SQLAlchemyError as error:
         db.rollback()
         raise HTTPException(status_code=500, detail="Erro interno do servidor: registro -> create") from error
+
+def ultimas_vendas(db: Session, limit: int = 4):
+    try:
+        vendas = db.query(Registro).order_by(Registro.data.desc(), Registro.hora.desc()).limit(limit).all()
+        return vendas
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: registro -> ultimas_vendas") from error
+
+def get_by_id(db: Session, id: int):
+    try:
+        registro = (
+            db.query(Registro)
+            .filter(Registro.id == id)
+            .first()
+        )
+        
+        if not registro:
+            raise HTTPException(status_code=404, detail=f"Registro dom id: {id} não encontrado")
+        
+        return registro
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: registro -> get_by_id") from error
+    
+def delete(db: Session, id: int):
+    try:
+        registro = db.query(Registro).filter(Registro.id == id).first()
+        if not registro:
+            raise HTTPException(status_code=404, detail=f"Registro com id: {id} não encontrado para remoção")
+        db.delete(registro)
+        db.commit()
+        
+        return registro
+        
+    except SQLAlchemyError as error:
+        raise HTTPException(status_code=500, detail="Erro interno do servidor: registro -> delete") from error
+    
