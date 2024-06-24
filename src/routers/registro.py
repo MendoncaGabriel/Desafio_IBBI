@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from config.database import get_db
-from src.controllers.registro  import create
+from src.controllers  import registro as Controller
 from src.schemas.registro import RegistroEntrada, RegistroSaida
 from src.utilities.auth import checkAuthorization
 
@@ -14,4 +14,4 @@ def create (
     access: dict = Depends(checkAuthorization)
 
 ):
-    return create(db, registro)
+    return Controller.create(db, registro)

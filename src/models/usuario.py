@@ -10,6 +10,4 @@ class Usuario(Base):
     login = Column(String(255), unique=True, index=True)
     senha = Column(String(255))
 
-    # Relacionamentos
-    registros = relationship("Registro", back_populates="usuario")
     

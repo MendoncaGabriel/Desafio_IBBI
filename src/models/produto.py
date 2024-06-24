@@ -15,4 +15,3 @@ class Produto(Base):
 
     # Relacionamentos
     categoria = relationship("Categoria", back_populates="produtos")
-    registros = relationship("Registro", back_populates="produto")

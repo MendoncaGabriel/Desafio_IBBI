@@ -4,7 +4,7 @@ from src.schemas.categoria import CategoriaEntrada
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 
-def create(db: Session, categoria_data: CategoriaEntrada) -> Categoria:
+def create(db: Session, categoria_data: CategoriaEntrada):
     try:
         categoria = Categoria(**categoria_data.model_dump())
         db.add(categoria)
@@ -21,13 +21,13 @@ def get_by_id(db: Session, categoria_id: int) -> Categoria:
     except SQLAlchemyError as error:
         raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def get_by_offset(db: Session, skip: int = 0, limit: int = 10) -> list:
+def get_by_offset(db: Session, skip: int = 0, limit: int = 10):
     try:
         return db.query(Categoria).offset(skip).limit(limit).all()
     except SQLAlchemyError as error:
         raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def update(db: Session, categoria_id: int, categoria_data: CategoriaEntrada) -> Categoria:
+def update(db: Session, categoria_id: int, categoria_data: CategoriaEntrada):
     try:
         db_query = db.query(Categoria).filter(Categoria.id == categoria_id)
         db_query.update(categoria_data.model_dump(exclude_unset=True))
@@ -37,7 +37,7 @@ def update(db: Session, categoria_id: int, categoria_data: CategoriaEntrada) -> 
         db.rollback()
         raise HTTPException(status_code=500, detail="Erro interno do servidor") from error
 
-def delete(db: Session, categoria_id: int) -> Categoria:
+def delete(db: Session, categoria_id: int):
     try:
         categoria = db.query(Categoria).filter(Categoria.id == categoria_id).first()
         if categoria:

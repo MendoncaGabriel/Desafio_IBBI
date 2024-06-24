@@ -24,7 +24,7 @@ def get_by_categoria(
         categoria = []
     return Controller.get_by_categoria(db, categoria)
 
-@router.get("/mais_vendidos")
+@router.get("/mais_vendidos", response_model=List[ProdutoSaida])
 def mais_vendidos(
     db: Session = Depends(get_db)
 ):
@@ -38,8 +38,15 @@ def get_by_offset(
 ):
     return Controller.get_by_offset(db, skip=skip, limit=limit)
 
+@router.get("/descricao", response_model=ProdutoSaida)
+def get_by_descricao(
+    descricao: str,
+    db: Session = Depends(get_db)
+):
+    return Controller.get_by_descricao(db, descricao)
+
 @router.get("/{id}", response_model=ProdutoSaida)
-def getById(
+def get_by_id(
     id: int,
     db: Session = Depends(get_db)
 ):
@@ -54,14 +61,10 @@ def update(
 ):
     return Controller.update(db, id, produto)
 
-
-@router.delete("/{id}", response_model=ProdutoSaida)
+@router.delete("/{id}", response_model=ProdutoEntrada)
 def delete(
     id: int, 
     # access: dict = Depends(checkAuthorization),
     db: Session = Depends(get_db)
 ):
-    produtoDelete = Controller.delete(db, id)
-    if produtoDelete is None:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    return produtoDelete
+    return Controller.delete(db, id)
