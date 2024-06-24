@@ -22,7 +22,8 @@ def login (
 @router.delete("/{id}", response_model=UsuarioRemove)
 def delete(
     id: int,
+    usuario: UsuarioLogin, 
     db: Session = Depends(get_db)
 ):
-    return Controller.delete(db, id)
+    return Controller.delete(db, usuario, id)
     

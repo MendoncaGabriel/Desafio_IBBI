@@ -62,16 +62,24 @@ def login(db: Session, usuario: UsuarioLogin):
         raise HTTPException(status_code=500, detail="Erro interno do servidor: usuario -> login") from error
 
 
-def delete(db: Session, id: int):
+def delete(db: Session, usuario: UsuarioLogin, id: int):
     try:
-        usuario = db.query(Usuario).filter(Usuario.id == id).first()
-        if not usuario:
+        usuario_delete = db.query(Usuario).filter(Usuario.id == id).first()
+        if not usuario_delete:
             raise HTTPException(status_code=404, detail=f"usuário com ID {id} não encontrado para remoção")
-
-        db.delete(usuario)
-        db.commit()
         
-        # verificar senha do usuario se esta correta para remover 
+        # verificar credenciais
+        #login
+        if usuario_delete.login != usuario.login:
+            raise HTTPException(status_code=401, detail="Login incorreto")
+        
+        #senha
+        if not verificarSenha(usuario.senha, usuario_delete.senha):
+            raise HTTPException(status_code=401, detail="Senha incorreta!")
+        
+
+        db.delete(usuario_delete)
+        db.commit()
 
         return {"msg": "usuário com removido com sucesso!"}
     
