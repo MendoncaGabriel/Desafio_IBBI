@@ -11,6 +11,8 @@ class RegistroSaida(RegistroEntrada):
     id: int
     data: str
     hora: str
+    valor: float
+    total: float
     descricao_produto: str
 
 

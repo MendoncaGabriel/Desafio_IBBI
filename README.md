@@ -14,6 +14,10 @@ O objetivo e criar um sistema para controle de vendas de um e-commerce.
 ## Documentação da API
 Confira a documentação da API aqui (#http://localhost:8000/docs)
 
+## Teste com pytest
+Para realizar os testes, e necessario comentar a dependencia de segunrança de cada rota
+Dependencia de segurança: security: dict = Depends(checkAuthorization)
+
 ## Ambiente Virtual
 **1 - Crie um ambiente vitual usando:**
 python -m venv venv

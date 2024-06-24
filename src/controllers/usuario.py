@@ -13,10 +13,9 @@ def signup(db: Session, usuario: UsuarioEntrada):
         if db.query(Usuario).filter(Usuario.login == usuario.login).first():
             raise HTTPException(status_code = 400, detail="Login já cadastrado")
 
-        # Criptografar a senha do usuario
+        # Criptografar senha do usuario
         hash_senha = criptografar(usuario.senha)
 
-        # Criar novo usuario no banco de dados
         novo_usuario = Usuario(
             nome = usuario.nome,
             login = usuario.login,
@@ -81,9 +80,8 @@ def delete(db: Session, usuario: UsuarioLogin, id: int):
         db.delete(usuario_delete)
         db.commit()
 
-        return {"msg": "usuário com removido com sucesso!"}
+        return {"msg": "usuário removido com sucesso!"}
     
     except SQLAlchemyError as error:
         db.rollback()
-        print(error)
         raise HTTPException(status_code=500, detail="Erro interno do servidor: usuário -> delete") from error

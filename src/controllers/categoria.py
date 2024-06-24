@@ -1,39 +1,57 @@
 from sqlalchemy.orm import Session
 from src.models.categoria import Categoria
-from src.schemas.categoria import CategoriaEntrada
+from src.schemas.categoria import CategoriaEntrada, CategoriaSaida
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
+from typing import List
 
-def create(db: Session, categoria_data: CategoriaEntrada):
+# FUNÇÕES AUXILIARES
+def check_categoria_by_id(db: Session, id: int) -> Categoria:
+    return db.query(Categoria).filter(Categoria.id == id).first()
+
+def check_categoria_by_descricao(db: Session, categoria: CategoriaEntrada) -> Categoria:
+    return db.query(Categoria).filter(Categoria.descricao == categoria.descricao).first()
+
+def check_categoria_existing_by_id_and_descricao(db: Session, categoria: CategoriaEntrada, id: int) -> Categoria:
+    return db.query(Categoria).filter(
+        Categoria.descricao == categoria.descricao,
+        Categoria.id != id
+    ).first()
+
+# CONTROLLERS
+def create(db: Session, categoria: CategoriaEntrada) -> CategoriaSaida:
     try:
-        # Verificar se já existe uma categoria com a mesma descrição
-        existing_categoria = db.query(Categoria).filter(Categoria.descricao == categoria_data.descricao).first()
-        if existing_categoria:
-            raise HTTPException(status_code=400, detail=f"Categoria com a descrição: {categoria_data.descricao}, id: {existing_categoria.id} ja existe.", )
+        # Verificar categoria com mesma descrição já existe
+        check_categ = check_categoria_by_descricao(db, categoria)
+        if check_categ:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Categoria com a descrição: {categoria.descricao}, id: {check_categ.id} já existe"
+            )
 
-
-        categoria = Categoria(**categoria_data.model_dump())
-        db.add(categoria)
+        categoria_create = Categoria(**categoria.model_dump())
+        db.add(categoria_create)
         db.commit()
-        db.refresh(categoria)
-        return categoria
+        db.refresh(categoria_create)
+        return categoria_create
+    
     except SQLAlchemyError as error:
         db.rollback()
         raise HTTPException(status_code=500, detail="Erro interno do servidor: categoria -> create") from error
 
-def get_by_id(db: Session, categoria_id: int) -> Categoria:
+def get_by_id(db: Session, id: int) -> CategoriaSaida:
     try:
-        categoria =  db.query(Categoria).filter(Categoria.id == categoria_id).first()
+        categoria = db.query(Categoria).filter(Categoria.id == id).first()
         
-        if categoria is None:
-            raise HTTPException(status_code=404, detail=f"Categoria com o id: {categoria_id} não encontrado")
+        if not categoria:
+            raise HTTPException(status_code=404, detail=f"Categoria com o id: {id} não encontrada")
         
         return categoria
 
     except SQLAlchemyError as error:
         raise HTTPException(status_code=500, detail="Erro interno do servidor: categoria -> get_by_id") from error
 
-def get_by_offset(db: Session, skip: int = 0, limit: int = 10):
+def get_by_offset(db: Session, skip: int = 0, limit: int = 10) -> List[CategoriaSaida]:
     try:
         categorias = db.query(Categoria).offset(skip).limit(limit).all()
         
@@ -45,35 +63,32 @@ def get_by_offset(db: Session, skip: int = 0, limit: int = 10):
     except SQLAlchemyError as error:
         raise HTTPException(status_code=500, detail="Erro interno do servidor: categoria -> get_by_offset") from error
 
-def update(db: Session, categoria_id: int, categoria_data: CategoriaEntrada):
+def update(db: Session, id: int, categoria: CategoriaEntrada) -> CategoriaSaida:
     try:
-        # Verifica se a descrição já existe em outra categoria
-        descricao_existente = db.query(Categoria).filter(
-            Categoria.descricao == categoria_data.descricao,
-            Categoria.id != categoria_id
-        ).first()
+        # Verifica se a descrição ja existe em outra categoria
+        descricao_existente = check_categoria_existing_by_id_and_descricao(db, categoria, id)
         if descricao_existente:
             raise HTTPException(status_code=400, detail=f"Já existe uma categoria com esta descrição: {descricao_existente.descricao}")
         
-        categoria = db.query(Categoria).filter(Categoria.id == categoria_id)
+        categoria_update = db.query(Categoria).filter(Categoria.id == id)
         
-        if not categoria:
-            raise HTTPException(status_code=404, detail=f"Produto com id: {categoria_id}, não encontrado para atualização")
+        if not categoria_update.first():
+            raise HTTPException(status_code=404, detail=f"Categoria com o id: {id}, não encontrada para atualização")
         
-        categoria.update(categoria_data.model_dump(exclude_unset=True))
+        categoria_update.update(categoria.model_dump(exclude_unset=True))
         db.commit()
         
-        return categoria.first()
+        return categoria_update.first()
     except SQLAlchemyError as error:
         db.rollback()
         raise HTTPException(status_code=500, detail="Erro interno do servidor: categoria -> update") from error
 
-def delete(db: Session, categoria_id: int):
+def delete(db: Session, id: int):
     try:
-        categoria = db.query(Categoria).filter(Categoria.id == categoria_id).first()
+        categoria = check_categoria_by_id(db, id)
         
         if not categoria:
-            raise HTTPException(status_code=404, detail=f"Categoria com id: {categoria_id}, não encontrado para remoção")
+            raise HTTPException(status_code=404, detail=f"Categoria com id: {id}, não encontrado para remoção")
         
         db.delete(categoria)
         db.commit()

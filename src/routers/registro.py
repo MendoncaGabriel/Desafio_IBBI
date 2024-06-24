@@ -12,24 +12,32 @@ router = APIRouter()
 def create (
     registro: RegistroEntrada, 
     db: Session = Depends(get_db),
-    # access: dict = Depends(checkAuthorization)
+    security: dict = Depends(checkAuthorization)
 ):
     return Controller.create(db, registro)
 
+
 @router.get("/ultimas-vendas", response_model=List[RegistroSaida])
-def get_ultimas_vendas(db: Session = Depends(get_db)):
+def get_ultimas_vendas(
+    db: Session = Depends(get_db),
+    security: dict = Depends(checkAuthorization)
+):
     return Controller.ultimas_vendas(db)
+
 
 @router.get("/{id}", response_model=RegistroSaida)
 def get_by_id(
     id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    security: dict = Depends(checkAuthorization)
 ):
     return Controller.get_by_id(db, id)
+
 
 @router.delete("/{id}", response_model=RegistroSaida)
 def delete(
     id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    security: dict = Depends(checkAuthorization)
 ):
     return  Controller.delete(db, id)

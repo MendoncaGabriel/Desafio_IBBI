@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 from config.database import Base
 
 class Registro(Base):
@@ -13,3 +13,5 @@ class Registro(Base):
     nome_cliente = Column(String(45))
     nome_vendedor = Column(String(45))
     observacao = Column(String(255))
+    valor = Column(Float)
+    total = Column(Float)

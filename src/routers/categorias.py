@@ -13,7 +13,7 @@ router = APIRouter()
 def create(
     categoria_data: CategoriaEntrada,
     db: Session = Depends(get_db),
-    # access: dict = Depends(checkAuthorization)
+    security: dict = Depends(checkAuthorization)
 ):
     return Controller.create(db, categoria_data)
 
@@ -21,30 +21,33 @@ def create(
 def get_by_offset(
     skip: int = 0,
     limit: int = 10,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    security: dict = Depends(checkAuthorization)
 ):
     return Controller.get_by_offset(db, skip=skip, limit=limit)
 
 @router.get("/{id}", response_model=CategoriaSaida)
 def get_by_id(
     id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    security: dict = Depends(checkAuthorization)
 ):
     return Controller.get_by_id(db, id)
 
 @router.put("/{id}", response_model=CategoriaSaida)
 def categoria_update(
     id: int,
-    categoria_data: CategoriaEntrada,
+    categoria: CategoriaEntrada,
     db: Session = Depends(get_db),
-    # access: dict = Depends(checkAuthorization)
+    security: dict = Depends(checkAuthorization)
 ):
-    return Controller.update(db, id, categoria_data)
+    return Controller.update(db, id, categoria)
+
 
 @router.delete("/{id}", response_model=CategoriaSaida)
 def categoria_delete(
     id: int,
     db: Session = Depends(get_db),
-    # access: dict = Depends(checkAuthorization)
+    security: dict = Depends(checkAuthorization)
 ):
     return Controller.delete(db, id)

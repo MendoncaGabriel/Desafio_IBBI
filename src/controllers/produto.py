@@ -2,13 +2,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from src.models.produto import Produto
 from src.models.categoria import Categoria
-from src.schemas.produto import ProdutoSaida, ProdutoEntrada
+from src.schemas.produto import ProdutoSaida, ProdutoEntrada, ProdutoCreate
 from src.utilities.converter import realDolar, getDolar
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from typing import List
 
-def create(db: Session, produto: ProdutoEntrada):
+def create(db: Session, produto: ProdutoEntrada) -> ProdutoCreate:
     try:
         novo_produto = Produto(**produto.model_dump())
         db.add(novo_produto)
@@ -24,7 +24,7 @@ def create(db: Session, produto: ProdutoEntrada):
         db.rollback()
         raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> create") from error
 
-def get_by_id(db: Session, id: int):
+def get_by_id(db: Session, id: int) -> ProdutoSaida:
     try:
         produto = (
             db.query(Produto)
@@ -115,7 +115,6 @@ def update(db: Session, id: int, produto: ProdutoEntrada):
         if descricao_existente:
             raise HTTPException(status_code=400, detail=f"Já existe um produto com esta descrição: {produto.descricao}")
 
-        # Atualizar o produto pelo ID
         produto_update = db.query(Produto).filter(Produto.id == id)
         
         if not produto_update:
@@ -133,7 +132,7 @@ def delete(db: Session, id: int):
     try:
         produto = db.query(Produto).filter(Produto.id == id).first()
         if not produto:
-            raise HTTPException(status_code=404, detail=f"Produto com ID {id} não encontrado para remoção")
+            raise HTTPException(status_code=404, detail=f"Produto com id: {id} não encontrado para remoção")
 
         db.delete(produto)
         db.commit()
@@ -142,7 +141,6 @@ def delete(db: Session, id: int):
     
     except SQLAlchemyError as error:
         db.rollback()
-        print(error)
         raise HTTPException(status_code=500, detail="Erro interno do servidor: produto -> delete") from error
 
 def get_by_categoria(db: Session, categorias: List[str]):
