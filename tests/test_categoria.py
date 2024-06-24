@@ -11,9 +11,14 @@ teste_id = None
 def test_get_by_offset_categoria():
     res = cliente.get("/categoria")
     assert res.status_code == 200
-    assert isinstance(res.json(), list)
-    if len(res.json()) > 0:
-        assert all(isinstance(item, dict) and "descricao" in item and "id" in item for item in res.json())
+
+    categorias = res.json()
+    assert isinstance(categorias, list)
+
+    for categoria in categorias:
+        assert isinstance(categoria, dict)
+        assert "descricao" in categoria
+        assert "id" in categoria
 
 def test_create_categoria():
     global teste_id, teste_descricao
@@ -31,15 +36,9 @@ def test_get_by_id_categoria():
     global teste_id
         
     res = cliente.get(f"/categoria/{teste_id}")
-    
-    if res.status_code == 200:
-        assert isinstance(res.json(), dict)
-        assert "descricao" in res.json()
-        assert "id" in res.json()
-    elif res.status_code == 404:
-        assert False, f"Categoria com ID {teste_id} não encontrada."
-    else:
-        assert False, f"Erro inesperado ao buscar categoria por ID {teste_id}: {res.status_code}"
+    assert isinstance(res.json(), dict)
+    assert "descricao" in res.json()
+    assert "id" in res.json()
 
 def test_update_categoria():
     global teste_id

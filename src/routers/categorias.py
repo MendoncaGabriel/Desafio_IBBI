@@ -47,4 +47,4 @@ def categoria_delete(
     db: Session = Depends(get_db),
     # access: dict = Depends(checkAuthorization)
 ):
-    return Controller.update(db, id)
+    return Controller.delete(db, id)
