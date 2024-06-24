@@ -41,48 +41,53 @@ Para executar o projeto via Docker, é necessário ter o Docker e o docker-compo
 1. Execute o comando de build no terminal: `docker-compose up --build`
 2. Acesse a documentação da API no Swagger neste endereço: [http://localhost:3000/docs](http://localhost:3000/docs)
 
+### Estrutura do Projeto
 
-## Estrutura do Projeto
-.
-├── config
-│   ├── database.py       # Configurações de conexão com o banco de dados
-├── src
-│   ├── controllers
-│   │   ├── categoria.py   # Controlador para operações relacionadas a categorias
-│   │   ├── produto.py     # Controlador para operações relacionadas a produtos
-│   │   ├── registro.py    # Controlador para operações relacionadas a registros
-│   │   ├── usuario.py     # Controlador para operações relacionadas a usuários
-│   ├── models
-│   │   ├── categoria.py   # Modelos de dados para categorias
-│   │   ├── produto.py     # Modelos de dados para produtos
-│   │   ├── registro.py    # Modelos de dados para registros
-│   │   ├── usuario.py     # Modelos de dados para usuários
-│   ├── routers
-│   │   ├── categoria.py   # Rotas da API para categorias
-│   │   ├── produto.py     # Rotas da API para produtos
-│   │   ├── registro.py    # Rotas da API para registros
-│   │   ├── usuario.py     # Rotas da API para usuários
-│   ├── schemas
-│   │   ├── categoria.py   # Esquemas de validação para categorias
-│   │   ├── produto.py     # Esquemas de validação para produtos
-│   │   ├── registro.py    # Esquemas de validação para registros
-│   │   ├── usuario.py     # Esquemas de validação para usuários
-│   ├── utilities
-│   │   ├── auth.py        # Funções utilitárias para autenticação
-│   │   ├── converter.py   # Funções utilitárias para conversão de dados
-├── tests
-│   ├── __init__.py        # Arquivo de inicialização para os testes
-│   ├── test_categorias.py # Testes para o módulo de categorias
-│   ├── test_docs.py       # Testes para a documentação da API
-│   ├── test_produto.py    # Testes para o módulo de produtos
-│   ├── test_registro.py   # Testes para o módulo de registros
-│   ├── test_usuario.py    # Testes para o módulo de usuários
-├── .env                   # Arquivo dotenv para armazenamento de variáveis de ambiente
-├── .gitattributes
-├── docker-compose.yml
-├── Dockerfile
-└── README.md              # Este arquivo, contendo a documentação do projeto
+* `config`
+  * `database.py` - Configurações de conexão com o banco de dados
 
+* `src`
+  * `controllers`
+    * `categoria.py` - Controlador para operações relacionadas a categorias
+    * `produto.py` - Controlador para operações relacionadas a produtos
+    * `registro.py` - Controlador para operações relacionadas a registros
+    * `usuario.py` - Controlador para operações relacionadas a usuários
+
+  * `models`
+    * `categoria.py` - Modelos de dados para categorias
+    * `produto.py` - Modelos de dados para produtos
+    * `registro.py` - Modelos de dados para registros
+    * `usuario.py` - Modelos de dados para usuários
+
+  * `routers`
+    * `categoria.py` - Rotas da API para categorias
+    * `produto.py` - Rotas da API para produtos
+    * `registro.py` - Rotas da API para registros
+    * `usuario.py` - Rotas da API para usuários
+
+  * `schemas`
+    * `categoria.py` - Esquemas de validação para categorias
+    * `produto.py` - Esquemas de validação para produtos
+    * `registro.py` - Esquemas de validação para registros
+    * `usuario.py` - Esquemas de validação para usuários
+
+  * `utilities`
+    * `auth.py` - Funções utilitárias para autenticação
+    * `converter.py` - Funções utilitárias para conversão de dados
+
+* `tests`
+  * `__init__.py` - Arquivo de inicialização para os testes
+  * `test_categorias.py` - Testes para o módulo de categorias
+  * `test_docs.py` - Testes para a documentação da API
+  * `test_produto.py` - Testes para o módulo de produtos
+  * `test_registro.py` - Testes para o módulo de registros
+  * `test_usuario.py` - Testes para o módulo de usuários
+
+* `.env` - Arquivo dotenv para armazenamento de variáveis de ambiente
+* `.gitattributes`
+* `docker-compose.yml`
+* `Dockerfile`
+* `README.md` - Este arquivo, contendo a documentação do projeto
 
 ## Endpoints da API
 
