@@ -1,108 +1,146 @@
-# Desafio Técnico IBBI
-Este é um projeto desenvolvido como parte do desafio técnico para IBBI.
-O objetivo e criar um sistema para controle de vendas de um e-commerce.
+# Desafio Técnico: IBBI - Instituto Brasileiro de Biotecnologia e Inovação
 
-## Índice
-- [Ambiente Virtual](#ambiente-virtual)
-- [Solução de Problemas](#solução-de-problemas)
-- [Rodar com Docker](#rodar-com-docker)
-- [Autenticação](#autenticação)
-- [Obtendo Token de Autenticação](#obtendo-token-de-autenticação)
-- [Acessando Rotas Restritas](#acessando-rotas-restritas)
+## Introdução
+Este projeto foi desenvolvido como parte de um desafio técnico do Instituto IBBI e tem como objetivo a criação de uma aplicação para controle de vendas em um e-commerce.
 
-
-## Documentação da API
-Confira a documentação da API aqui (#http://localhost:8000/docs)
-
-## Teste com pytest
-Para realizar os testes, e necessario comentar a dependencia de segunrança de cada rota
-Dependencia de segurança: security: dict = Depends(checkAuthorization)
-
-## Ambiente Virtual
-**1 - Crie um ambiente vitual usando:**
-python -m venv venv
-
-**2 - Ative o novo ambiente virtual:**
-.\venv\Scripts\activate
-
-**3 - Instale o uvicorn**
-pip install uvicorn
-
-**4 - instale as dependecias do projeto:**
-pip install -r requirements.txt
-
-**5 - Execute o sistema:**
-uvicorn src.main:app --reload  
-
-**Observações:**
-Caso escolha executar o sistema via ambiente virtual, e importante garantir um servidor Mysql e configurar corretamente as variaveis de ambiente no arquivo .env
-- [Erro de conexão com banco de dados](#erro-conexao-com-banco-de-dados)
+## Tecnologias Utilizadas
+- Python
+- MySQL
+- Docker
+- SQLAlchemy
+- Pydantic
+- JSON Web Token (JWT)
+- Bcrypt
 
 
-### Ativar Ambiente Virtual
+## Instalação
 
-Para ativar o ambiente virtual:
+### Ambiente Virtual com Uvicorn
+1. Crie um ambiente virtual utilizando o comando: `python -m venv venv`
+2. Ative o ambiente virtual: `.\venv\Scripts\activate`
+3. Instale o Uvicorn: `pip install uvicorn`
+4. Instale as dependências do projeto: `pip install -r requirements.txt`
+5. Siga as [etapas de execução](#via-uvcorn).
 
-.\venv\Scripts\activate
+### Observações
 
-### Instalar Dependências
+Para executar o programa via Uvicorn, é necessário ter o Python 3 instalado e um SGBD MySQL configurado corretamente nas variáveis de ambiente no arquivo `.env`.
 
-Para instalar as dependências do projeto:
+## Ambiente Docker
 
-pip install -r requirements.txt
+Para executar o projeto via Docker, é necessário ter o Docker e o docker-compose instalados em seu computador. Abra o Docker Desktop e siga as [etapas de execução](#via-docker).
 
-### Executar o Projeto
+## Executando a Aplicação
 
-Para executar o projeto em ambiente virtual:
+### Via Uvicorn:
+1. Execute o programa: `uvicorn src.main:app`
+   - Experimente usar a flag `--reload` para ter o Hot Reload.
+2. Acesse a documentação da API no Swagger neste endereço: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-uvicorn src.main:app --reload
+### Via Docker
+1. Execute o comando de build no terminal: `docker-compose up --build`
+2. Acesse a documentação da API no Swagger neste endereço: [http://localhost:3000/docs](http://localhost:3000/docs)
 
-## Solução de Problemas
 
-## Erro conexao com banco de dados
-Em caso de erro com conexão com banco de dados ou variaveis de ambiente desatualizadas, e necessario apagar o cache ultilizando o comando: python -m pyclean .
+## Estrutura do Projeto
+.
+├── config
+│   ├── database.py       # Configurações de conexão com o banco de dados
+├── src
+│   ├── controllers
+│   │   ├── categoria.py   # Controlador para operações relacionadas a categorias
+│   │   ├── produto.py     # Controlador para operações relacionadas a produtos
+│   │   ├── registro.py    # Controlador para operações relacionadas a registros
+│   │   ├── usuario.py     # Controlador para operações relacionadas a usuários
+│   ├── models
+│   │   ├── categoria.py   # Modelos de dados para categorias
+│   │   ├── produto.py     # Modelos de dados para produtos
+│   │   ├── registro.py    # Modelos de dados para registros
+│   │   ├── usuario.py     # Modelos de dados para usuários
+│   ├── routers
+│   │   ├── categoria.py   # Rotas da API para categorias
+│   │   ├── produto.py     # Rotas da API para produtos
+│   │   ├── registro.py    # Rotas da API para registros
+│   │   ├── usuario.py     # Rotas da API para usuários
+│   ├── schemas
+│   │   ├── categoria.py   # Esquemas de validação para categorias
+│   │   ├── produto.py     # Esquemas de validação para produtos
+│   │   ├── registro.py    # Esquemas de validação para registros
+│   │   ├── usuario.py     # Esquemas de validação para usuários
+│   ├── utilities
+│   │   ├── auth.py        # Funções utilitárias para autenticação
+│   │   ├── converter.py   # Funções utilitárias para conversão de dados
+├── tests
+│   ├── __init__.py        # Arquivo de inicialização para os testes
+│   ├── test_categorias.py # Testes para o módulo de categorias
+│   ├── test_docs.py       # Testes para a documentação da API
+│   ├── test_produto.py    # Testes para o módulo de produtos
+│   ├── test_registro.py   # Testes para o módulo de registros
+│   ├── test_usuario.py    # Testes para o módulo de usuários
+├── .env                   # Arquivo dotenv para armazenamento de variáveis de ambiente
+├── .gitattributes
+├── docker-compose.yml
+├── Dockerfile
+└── README.md              # Este arquivo, contendo a documentação do projeto
 
-Se ocorrerem problemas durante a execução, siga estes passos:
 
-1. Desativar e Excluir o Ambiente Virtual Existente:
+## Endpoints da API
 
-deactivate  # se estiver ativo
-Remove-Item -Recurse -Force venv
+Para utilizar os endpoints da API, é necessário obter uma chave de autenticação. Esta chave pode ser facilmente obtida ao criar uma conta de usuário ou realizar o login. No diretório `/docs`, localizado no canto superior direito, há um botão que abre um formulário. Copie o token de autenticação e cole no campo HTTPBearer Value do formulário, em seguida, confirme clicando no botão Authorize.
 
-2. Criar e Ativar um Novo Ambiente Virtual:
+### Produtos
 
-python -m venv venv
-.\venv\Scripts\activate
+- **POST** `/produto/` - Cria um novo produto.
+- **GET** `/produto/` - Retorna todos os produtos.
+- **GET** `/produto/getbycategoria` - Retorna produtos por categoria.
+- **GET** `/produto/mais_vendidos` - Retorna os produtos mais vendidos.
+- **GET** `/produto/descricao` - Retorna descrições dos produtos.
+- **GET** `/produto/{id}` - Retorna um produto específico pelo ID.
+- **PUT** `/produto/{id}` - Atualiza um produto pelo ID.
+- **DELETE** `/produto/{id}` - Deleta um produto pelo ID.
 
-## Rodar com Docker
+### Categorias
 
-Para rodar o projeto utilizando Docker, execute o seguinte comando:
+- **POST** `/categoria/` - Cria uma nova categoria.
+- **GET** `/categoria/` - Retorna todas as categorias.
+- **GET** `/categoria/{id}` - Retorna uma categoria específica pelo ID.
+- **PUT** `/categoria/{id}` - Atualiza uma categoria pelo ID.
+- **DELETE** `/categoria/{id}` - Deleta uma categoria pelo ID.
 
-docker-compose up --build
+### Usuários
 
-## Autenticação
+- **POST** `/usuario/signup` - Registra um novo usuário.
+- **POST** `/usuario/login` - Realiza o login de um usuário.
+- **DELETE** `/usuario/{id}` - Deleta um usuário pelo ID.
 
-### Obtendo Token de Autenticação
+### Registros
 
-Para obter um token de autenticação, faça uma requisição para /usuario/signup ou /usuario/signin.
+- **POST** `/registro/` - Registra uma nova entrada.
+- **GET** `/registro/ultimas-vendas` - Retorna as últimas vendas registradas.
+- **DELETE** `/registro/ultimas-vendas` - Deleta as últimas vendas registradas.
 
-### Acessando Rotas Restritas
+## Testes
 
-Para acessar rotas protegidas, adicione o seguinte cabeçalho à sua requisição HTTP:
+Para executar os testes unitários da aplicação, utilize o comando no terminal: `pytest`
 
-Authorization: Bearer <seu-token-aqui>
+### Observação Importante
 
-Substitua <seu-token-aqui> pelo token obtido na autenticação.
+Antes de executar os testes, é necessário comentar ou remover a dependência de segurança (security: dict = Depends(checkAuthorization)) de todas as rotas da API. Isso permite que os testes sejam realizados sem a necessidade de autenticação, garantindo uma cobertura completa dos casos de teste durante o processo de teste automatizado.
 
-## Cadastro
+### Como Comentar ou Remover a Dependência de Segurança
 
-1 - Cadastre uma categoria informando uma descricao para o endpoint: POST /categoria/
-2 - Cadastro um produto informando os seguintes campos
-{
-  "descricao": "string",
-  "valor": 0,
-  "quantidade": 0,
-  "categoria_id": 1
-}
+1. Localize as Rotas: Abra os arquivos de roteamento (`routers/*.py`) onde as rotas da API estão definidas.
 
-Observação: O campo "categoria_id" e obrigatorio para manter o relacionamento entre as tabelas de categoria e produto
+2. Comente ou Remova a Linha de Segurança: Procure por trechos de código que incluam a dependência de segurança `security: dict = Depends(checkAuthorization)`. Comente ou remova essa linha temporariamente para desabilitar a verificação de autenticação durante os testes.
+
+3. Execute os Testes: Após comentar ou remover as dependências de segurança, execute os testes novamente utilizando o comando `pytest` para verificar o funcionamento correto de todas as funcionalidades da API em um ambiente de teste.
+
+
+
+## Agradecimentos
+
+Gostaria de agradecer ao Instituto [IBBI](https://www.ibbi.org.br/) pela oportunidade de participar deste desafio técnico, que certamente contribuirá significativamente para o meu desenvolvimento profissional.
+
+### Gabriel Andrade - Desenvolvedor
+
+Email: mendoncagabriel1997@gmail.com
